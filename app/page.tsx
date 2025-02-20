@@ -8,10 +8,10 @@ import { useState } from "react";
 
 // Mock data
 const mockProfiles = [
-  { id: 1, name: "João Silva", image: "/cibra.webp" },
-  { id: 2, name: "Maria Oliveira", image: "/cibra.webp" },
-  { id: 3, name: "Carlos Souza", image: "/cibra.webp" },
-  { id: 4, name: "Ana Pereira", image: "/cibra.webp" },
+  { id: 1, name: "João Silva", image: "/cibra.webp", cpf: '12345678901' },
+  { id: 2, name: "Maria Oliveira", image: "/cibra.webp", cpf: '12345678901' },
+  { id: 3, name: "Carlos Souza", image: "/cibra.webp", cpf: '12345678901' },
+  { id: 4, name: "Ana Pereira", image: "/cibra.webp", cpf: '12345678901' },
 ];
 
 export default function Home() {

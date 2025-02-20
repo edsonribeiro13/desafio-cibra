@@ -2,7 +2,7 @@ import CardPerfil from "../base/CardPerfil";
 import Image from "next/image";
 
 interface FilteredProfilesProps {
-  profiles: { id: number; name: string; image: string }[];
+  profiles: { id: number; name: string; image: string, cpf: string }[];
   searchQuery: string;
 }
 
@@ -15,7 +15,7 @@ const FilteredProfiles = ({ profiles, searchQuery }: FilteredProfilesProps) => {
     <div className="flex flex-wrap gap-6 p-2 justify-center">
       {filteredProfiles.length > 0 ? (
         filteredProfiles.map((profile) => (
-          <CardPerfil key={profile.id} image={profile.image} name={profile.name} />
+          <CardPerfil key={profile.id} image={profile.image} name={profile.name} cpf={profile.cpf} />
         ))
       ) : (
         <div className="flex flex-col items-center justify-center space-y-2 
