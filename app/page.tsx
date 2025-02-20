@@ -1,4 +1,8 @@
-import CardPerfil from "@/components/base/CardPerfil";
+"use client";
+
+import SearchBar from "@/components/base/SearchBar";
+import FilteredProfiles from "@/components/home/FilteredProfile";
+import { useState } from "react";
 
 // Mock data
 const mockProfiles = [
@@ -9,11 +13,14 @@ const mockProfiles = [
 ];
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
-    <div className="flex flex-wrap gap-6 p-8 justify-center">
-        {mockProfiles.map((profile) => (
-          <CardPerfil key={profile.id} image={profile.image} name={profile.name} />
-        ))}
+    <div className="p-2">
+      <div className="w-full flex justify-end">
+        <SearchBar onSearch={setSearchQuery} />
       </div>
+      <FilteredProfiles profiles={mockProfiles} searchQuery={searchQuery} />
+    </div>
   );
 }
