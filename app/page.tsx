@@ -1,7 +1,9 @@
 "use client";
 
+import FAB from "@/components/base/FAB";
 import SearchBar from "@/components/base/SearchBar";
 import FilteredProfiles from "@/components/home/FilteredProfile";
+import { useFABStore } from "@/store/FABStore";
 import { useState } from "react";
 
 // Mock data
@@ -14,13 +16,18 @@ const mockProfiles = [
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { hideFAB } = useFABStore();
 
   return (
     <div className="p-2">
       <div className="w-full flex justify-end">
         <SearchBar onSearch={setSearchQuery} />
       </div>
-      <FilteredProfiles profiles={mockProfiles} searchQuery={searchQuery} />
+        <FilteredProfiles 
+          profiles={mockProfiles} 
+          searchQuery={searchQuery} 
+        />
+      {!hideFAB ? <FAB route="/perfil" hidden={hideFAB} /> : undefined}
     </div>
   );
 }

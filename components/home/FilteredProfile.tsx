@@ -12,14 +12,14 @@ const FilteredProfiles = ({ profiles, searchQuery }: FilteredProfilesProps) => {
   );
 
   return (
-    <div className="flex flex-wrap gap-6 p-8 justify-center">
+    <div className="flex flex-wrap gap-6 p-2 justify-center">
       {filteredProfiles.length > 0 ? (
         filteredProfiles.map((profile) => (
           <CardPerfil key={profile.id} image={profile.image} name={profile.name} />
         ))
       ) : (
-        <div className="flex flex-col items-center justify-center space-y-4 
-        text-center w-full max-w-md p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+        <div className="flex flex-col items-center justify-center space-y-2 
+        text-center w-full max-w-md p-3 bg-white shadow-lg rounded-lg border border-gray-200">
           <Image
             src="/cibra.webp"
             alt="Nenhum perfil encontrado"
