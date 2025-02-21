@@ -11,29 +11,36 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const { hideFAB } = useFABStore();
   const [profiles, setProfiles] = useState<FormPerfil[]>([])
+  const [usersUpdated, setUsersUpdated] = useState(false)
+
+  const loadProfiles = () => {
+    const allProfiles: FormPerfil[] = [];
+    Object.keys(localStorage).forEach((key) => {
+      try {
+        const item = localStorage.getItem(key);
+        if (item) {
+          const profile = JSON.parse(item);
+          if (profile?.cpf) {
+            allProfiles.push(profile);
+          }
+        }
+      } catch {
+      }
+    });
+
+    setProfiles(allProfiles);
+  };
 
   useEffect(() => {
-    const loadProfiles = () => {
-      const allProfiles: FormPerfil[] = [];
-      Object.keys(localStorage).forEach((key) => {
-        try {
-          const item = localStorage.getItem(key);
-          if (item) {
-            const profile = JSON.parse(item);
-            if (profile?.cpf) {
-              allProfiles.push(profile);
-            }
-          }
-        } catch (error) {
-          console.error(`Erroao ler item ${key}:`, error);
-        }
-      });
-
-      setProfiles(allProfiles);
-    };
-
     loadProfiles();
   }, []);
+
+  useEffect(() => {
+    if (usersUpdated) {
+      loadProfiles()
+      setUsersUpdated(false)
+    }
+  }, [usersUpdated])
 
   return (
     <div className="p-2">
@@ -43,6 +50,7 @@ export default function Home() {
         <FilteredProfiles 
           profiles={profiles} 
           searchQuery={searchQuery} 
+          updateUserList={setUsersUpdated}
         />
       {!hideFAB ? <FAB route="/perfil" hidden={hideFAB} /> : undefined}
     </div>

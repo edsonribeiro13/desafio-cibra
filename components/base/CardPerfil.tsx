@@ -7,7 +7,8 @@ import { useFABStore } from "@/store/FABStore";
 import { FormPerfil } from "@/interfaces/CardPerfil";
 import { useState } from "react";
 
-const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita, onEdit }: FormPerfil & {onEdit: (cpf: string) => void}) => {
+const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita, onEdit, onDelete }: 
+  FormPerfil & {onEdit: (cpf: string) => void, onDelete: (cpf: string, nome: string) => void}) => {
   const { setHideFAB } = useFABStore();
   const [showDetails, setShowDetails] = useState(false);
 
@@ -18,12 +19,13 @@ const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita, onEdit }: Fo
       onMouseLeave={() => setHideFAB(false)}
     >
       <div className="flex flex-wrap items-center gap-5">
-        <Image 
+      { foto ?  <Image 
           src={foto as unknown as string} 
           alt={nome} 
           width={100} 
           height={125}  
           className="rounded-full object-cover border border-gray-300" />
+        : ''}
         <p className="font-bold text-black text-lg">{nome}</p>
       </div>
       <div className="mt-2 text-gray-600 text-sm">
@@ -48,11 +50,18 @@ const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita, onEdit }: Fo
           </div>
         </div>
       )}
-      <div onClick={() => onEdit(cpf)} className="mt-3 flex gap-4">
+      <div onClick={(event) =>{ 
+        event.stopPropagation()
+        onEdit(cpf)
+      }} className="mt-3 flex gap-4">
         <button className="text-blue-600 hover:text-blue-800">
           <Pencil size={20} />
         </button>
-        <button className="text-red-600 hover:text-red-800">
+        <button onClick={(event) => {
+          event.stopPropagation()
+          onDelete(cpf, nome)
+        }
+          } className="text-red-600 hover:text-red-800">
           <Trash size={20} />
         </button>
       </div>
