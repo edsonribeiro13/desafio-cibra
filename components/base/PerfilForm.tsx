@@ -8,6 +8,8 @@ import { formatCPF } from "@/utils/formatCpf";
 import Image from "next/image";
 import { Camera } from "lucide-react";
 import { isValidCPF } from "@/utils/validateCpf";
+import { toBase64 } from "@/utils/base64";
+import {Select} from 'radix-ui'
 
 const COMIDAS = ["Pizza", "Hambúrguer", "Sushi", "Churrasco", "Lasanha"];
 const CORES = ["Vermelho", "Azul", "Verde", "Amarelo", "Preto"];
@@ -21,6 +23,14 @@ const perfilSchema = z.object({
   comidaFavorita: z.string().min(1, "Escolha sua comida favorita"),
   corFavorita: z.string().min(1, "Escolha sua cor favorita"),
 });
+
+interface FormPerfil {
+    nome: string
+    cpf: string
+    comidaFavorita: string
+    corFavorita: string
+    foto?: File
+}
 
 export default function PerfilForm() {
   const [preview, setPreview] = useState<string | null>(null);
@@ -47,8 +57,22 @@ export default function PerfilForm() {
     setValue("cpf", formatCPF(rawCPF));
   };
 
-  const onSubmit = (data: any) => {
-    console.log("Dados do Form:", data);
+  const onSubmit = async (data: FormPerfil) => {
+    if (localStorage.getItem(data.cpf.replace(/\D/g, "")))
+        //snackbar
+        return
+    let fotoBase64 = null;
+    if (data.foto) {
+      fotoBase64 = await toBase64(data.foto);
+    }
+
+    localStorage.setItem(data.cpf.replace(/\D/g, ""), JSON.stringify({
+      nome: data.nome,
+      cpf: data.cpf.replace(/\D/g, ""),
+      foto: fotoBase64,
+      comidaFavorita: data.comidaFavorita,
+      corFavorita: data.corFavorita,
+    }));
   };
 
   return (
