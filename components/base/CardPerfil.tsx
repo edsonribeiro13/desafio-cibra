@@ -5,9 +5,11 @@ import { formatCPF } from "@/utils/formatCpf";
 import Image from "next/image";
 import { useFABStore } from "@/store/FABStore";
 import { FormPerfil } from "@/interfaces/CardPerfil";
+import { useState } from "react";
 
-const CardPerfil = ({ cpf, nome, foto }: FormPerfil) => {
+const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita }: FormPerfil) => {
   const { setHideFAB } = useFABStore();
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <div
@@ -25,8 +27,27 @@ const CardPerfil = ({ cpf, nome, foto }: FormPerfil) => {
         <p className="font-bold text-black text-lg">{nome}</p>
       </div>
       <div className="mt-2 text-gray-600 text-sm">
-        {formatCPF(cpf)}
+        CPF: {formatCPF(cpf)}
       </div>
+      <button 
+        className="hover:bg-primaryBg hover:text-white text-primaryBg text-bold p-0 text-s rounded-md w-full h-1/8"
+        onClick={() => setShowDetails(!showDetails)}
+      >
+        {showDetails ? "Ver menos" : "Ver mais"}
+      </button>
+      {showDetails && (
+        <div className="mt-3 w-full text-center">
+          <div className="bg-gray-100 p-2 rounded-md">
+            <p className="text-gray-500 text-sm font-semibold">Comida Favorita:</p>
+            <p className="text-gray-700">{comidaFavorita}</p>
+          </div>
+
+          <div className="bg-gray-100 p-2 rounded-md mt-2">
+            <p className="text-gray-500 text-sm font-semibold">Cor Favorita:</p>
+            <p className="text-gray-700">{corFavorita}</p>
+          </div>
+        </div>
+      )}
       <div className="mt-3 flex gap-4">
         <button className="text-blue-600 hover:text-blue-800">
           <Pencil size={20} />

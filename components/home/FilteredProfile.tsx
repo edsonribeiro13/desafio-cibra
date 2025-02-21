@@ -16,7 +16,14 @@ const FilteredProfiles = ({ profiles, searchQuery }: FilteredProfilesProps) => {
     <div className="flex flex-wrap gap-6 p-2 justify-center">
       {filteredProfiles.length > 0 ? (
         filteredProfiles.map((profile) => (
-          <CardPerfil key={profile.cpf} foto={profile.foto} nome={profile.nome} cpf={profile.cpf} />
+          <CardPerfil 
+            key={profile.cpf} 
+            foto={profile.foto} 
+            nome={profile.nome} 
+            cpf={profile.cpf}
+            comidaFavorita={profile.comidaFavorita}
+            corFavorita={profile.corFavorita}
+          />
         ))
       ) : (
         <div className="flex flex-col items-center justify-center space-y-2 
