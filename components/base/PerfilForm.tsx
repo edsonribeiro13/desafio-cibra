@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,8 +8,9 @@ import { formatCPF } from "@/utils/formatCpf";
 import Image from "next/image";
 import { Camera } from "lucide-react";
 import { isValidCPF } from "@/utils/validateCpf";
-import { toBase64 } from "@/utils/base64";
+import { dataURLtoFile, toBase64 } from "@/utils/base64";
 import {AlertDialog} from 'radix-ui'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 const COMIDAS = ["Pizza", "Hambúrguer", "Sushi", "Churrasco", "Lasanha"];
 const CORES = ["Vermelho", "Azul", "Verde", "Amarelo", "Preto"];
@@ -32,9 +33,13 @@ interface FormPerfil {
     foto?: File
 }
 
-export default function PerfilForm() {
+const PerfilForm = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const router = useSearchParams();
+  const redirect = useRouter()
+  const cpfFromUrl = router.get('cpf');
+  const [isFormDisabled, setFormDisabled] = useState(false); 
 
   const {
     register,
@@ -44,6 +49,23 @@ export default function PerfilForm() {
   } = useForm({
     resolver: zodResolver(perfilSchema),
   });
+
+  useEffect(() => {
+    if (cpfFromUrl && typeof cpfFromUrl === "string") {
+      const storedUser = localStorage.getItem(cpfFromUrl);
+      if (storedUser) {
+        const profile = JSON.parse(storedUser ?? '')
+        const profilePhoto = dataURLtoFile(profile.foto, 'fotoUsuario')
+        setValue('nome', profile.nome);
+        setValue('cpf', formatCPF(profile.cpf));
+        setValue('comidaFavorita', profile.comidaFavorita);
+        setValue('corFavorita', profile.corFavorita);
+        setValue('foto', profilePhoto);
+        setPreview(URL.createObjectURL(profilePhoto))
+        setFormDisabled(true);
+      }
+    }
+  }, [cpfFromUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,7 +81,7 @@ export default function PerfilForm() {
   };
 
   const onSubmit = async (data: FormPerfil) => {
-    if (localStorage.getItem(data.cpf.replace(/\D/g, ""))) {
+    if (localStorage.getItem(data.cpf.replace(/\D/g, "")) && !cpfFromUrl) {
         setDialogOpen(true);
         return;
     }
@@ -76,6 +98,8 @@ export default function PerfilForm() {
       comidaFavorita: data.comidaFavorita,
       corFavorita: data.corFavorita,
     }));
+
+    redirect.push('/')
   };
 
   return (
@@ -85,9 +109,9 @@ export default function PerfilForm() {
         <label htmlFor="foto" className="cursor-pointer">
           <div className="flex items-center bg-gray-200 p-2 rounded-full hover:bg-gray-300 transition">
             <Camera className="w-6 h-6 text-gray-600" />
-            {preview ? (
+            {(preview) ? (
               <Image 
-                    src={preview} 
+                    src={preview}
                     width={75} 
                     height={50}  
                     alt="Preview foto de perfil" 
@@ -110,8 +134,10 @@ export default function PerfilForm() {
         <label className="block font-medium">Nome</label>
         <input
           {...register("nome")}
-          className="w-full p-2 border rounded-md focus:outline-none focus:border-[#b0d136] transition duration-200"
+          className={`w-full p-2 border rounded-md focus:outline-none focus:border-[#b0d136] transition duration-200 
+            ${ isFormDisabled ? 'bg-gray-300' : ''}`}
           placeholder="Digite seu nome"
+          disabled={isFormDisabled}
         />
         {errors.nome && <p className="text-red-500 text-sm">{errors.nome.message}</p>}
       </div>
@@ -119,8 +145,10 @@ export default function PerfilForm() {
         <label className="block font-medium">CPF</label>
         <input
           {...register("cpf")}
-          className="w-full p-2 border rounded-md focus:outline-none focus:border-[#b0d136] transition duration-200"
+          className={`w-full p-2 border rounded-md focus:outline-none focus:border-[#b0d136] transition duration-200 
+            ${ isFormDisabled ? 'bg-gray-300' : ''}`}
           placeholder="000.000.000-00"
+          disabled={isFormDisabled}
           onChange={handleCPFChange}
         />
         {errors.cpf && <p className="text-red-500 text-sm">{errors.cpf.message}</p>}
@@ -169,4 +197,6 @@ export default function PerfilForm() {
     </>
   );
 }
+
+export default PerfilForm
 
