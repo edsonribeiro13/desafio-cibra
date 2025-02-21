@@ -11,6 +11,7 @@ import { isValidCPF } from "@/utils/validateCpf";
 import { dataURLtoFile, toBase64 } from "@/utils/base64";
 import {AlertDialog} from 'radix-ui'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { FormPerfil } from "@/interfaces/CardPerfil";
 
 const COMIDAS = ["Pizza", "Hambúrguer", "Sushi", "Churrasco", "Lasanha"];
 const CORES = ["Vermelho", "Azul", "Verde", "Amarelo", "Preto"];
@@ -24,14 +25,6 @@ const perfilSchema = z.object({
   comidaFavorita: z.string().min(1, "Escolha sua comida favorita"),
   corFavorita: z.string().min(1, "Escolha sua cor favorita"),
 });
-
-interface FormPerfil {
-    nome: string
-    cpf: string
-    comidaFavorita: string
-    corFavorita: string
-    foto?: File
-}
 
 const PerfilForm = () => {
   const [preview, setPreview] = useState<string | null>(null);
@@ -65,7 +58,7 @@ const PerfilForm = () => {
         setFormDisabled(true);
       }
     }
-  }, [cpfFromUrl]);
+  }, [cpfFromUrl, setValue]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

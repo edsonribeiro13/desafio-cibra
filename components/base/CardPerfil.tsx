@@ -4,14 +4,9 @@ import { Pencil, Trash } from "lucide-react";
 import { formatCPF } from "@/utils/formatCpf";
 import Image from "next/image";
 import { useFABStore } from "@/store/FABStore";
+import { FormPerfil } from "@/interfaces/CardPerfil";
 
-interface CardPerfilProps {
-  image: string;
-  name: string;
-  cpf: string;
-}
-
-const CardPerfil = ({ image, name, cpf }: CardPerfilProps) => {
+const CardPerfil = ({ cpf, nome, foto }: FormPerfil) => {
   const { setHideFAB } = useFABStore();
 
   return (
@@ -20,14 +15,14 @@ const CardPerfil = ({ image, name, cpf }: CardPerfilProps) => {
       onMouseEnter={() => setHideFAB(true)}
       onMouseLeave={() => setHideFAB(false)}
     >
-      <div className="flex items-center gap-5">
-      <Image 
-          src={image} 
-          alt={name} 
-          width={75} 
-          height={75}  
-          className="w-14 h-14 rounded-full object-cover border border-gray-300" />
-        <p className="font-bold text-black text-lg">{name}</p>
+      <div className="flex flex-wrap items-center gap-5">
+        <Image 
+          src={foto as unknown as string} 
+          alt={nome} 
+          width={100} 
+          height={125}  
+          className="rounded-full object-cover border border-gray-300" />
+        <p className="font-bold text-black text-lg">{nome}</p>
       </div>
       <div className="mt-2 text-gray-600 text-sm">
         {formatCPF(cpf)}

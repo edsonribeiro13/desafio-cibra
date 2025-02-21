@@ -3,20 +3,37 @@
 import FAB from "@/components/base/FAB";
 import SearchBar from "@/components/base/SearchBar";
 import FilteredProfiles from "@/components/home/FilteredProfile";
+import { FormPerfil } from "@/interfaces/CardPerfil";
 import { useFABStore } from "@/store/FABStore";
-import { useState } from "react";
-
-// Mock data
-const mockProfiles = [
-  { id: 1, name: "João Silva", image: "/cibra.webp", cpf: '12345678901' },
-  { id: 2, name: "Maria Oliveira", image: "/cibra.webp", cpf: '12345678901' },
-  { id: 3, name: "Carlos Souza", image: "/cibra.webp", cpf: '12345678901' },
-  { id: 4, name: "Ana Pereira", image: "/cibra.webp", cpf: '12345678901' },
-];
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const { hideFAB } = useFABStore();
+  const [profiles, setProfiles] = useState<FormPerfil[]>([])
+
+  useEffect(() => {
+    const loadProfiles = () => {
+      const allProfiles: FormPerfil[] = [];
+      Object.keys(localStorage).forEach((key) => {
+        try {
+          const item = localStorage.getItem(key);
+          if (item) {
+            const profile = JSON.parse(item);
+            if (profile?.cpf) {
+              allProfiles.push(profile);
+            }
+          }
+        } catch (error) {
+          console.error(`Erroao ler item ${key}:`, error);
+        }
+      });
+
+      setProfiles(allProfiles);
+    };
+
+    loadProfiles();
+  }, []);
 
   return (
     <div className="p-2">
@@ -24,7 +41,7 @@ export default function Home() {
         <SearchBar onSearch={setSearchQuery} />
       </div>
         <FilteredProfiles 
-          profiles={mockProfiles} 
+          profiles={profiles} 
           searchQuery={searchQuery} 
         />
       {!hideFAB ? <FAB route="/perfil" hidden={hideFAB} /> : undefined}
