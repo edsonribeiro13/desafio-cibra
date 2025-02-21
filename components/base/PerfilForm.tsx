@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Camera } from "lucide-react";
 import { isValidCPF } from "@/utils/validateCpf";
 import { toBase64 } from "@/utils/base64";
-import {Select} from 'radix-ui'
+import {AlertDialog} from 'radix-ui'
 
 const COMIDAS = ["Pizza", "Hambúrguer", "Sushi", "Churrasco", "Lasanha"];
 const CORES = ["Vermelho", "Azul", "Verde", "Amarelo", "Preto"];
@@ -34,6 +34,7 @@ interface FormPerfil {
 
 export default function PerfilForm() {
   const [preview, setPreview] = useState<string | null>(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const {
     register,
@@ -58,9 +59,11 @@ export default function PerfilForm() {
   };
 
   const onSubmit = async (data: FormPerfil) => {
-    if (localStorage.getItem(data.cpf.replace(/\D/g, "")))
-        //snackbar
-        return
+    if (localStorage.getItem(data.cpf.replace(/\D/g, ""))) {
+        setDialogOpen(true);
+        return;
+    }
+
     let fotoBase64 = null;
     if (data.foto) {
       fotoBase64 = await toBase64(data.foto);
@@ -76,6 +79,7 @@ export default function PerfilForm() {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="flex items-center space-x-4">
         <label htmlFor="foto" className="cursor-pointer">
@@ -149,6 +153,20 @@ export default function PerfilForm() {
         Salvar
       </button>
     </form>
+    <AlertDialog.Root open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialog.Trigger />
+        <AlertDialog.Overlay 
+            className="fixed inset-0 bg-black opacity-50" 
+            onClick={() => setDialogOpen(false)}
+        />
+        <AlertDialog.Content className="fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg">
+          <AlertDialog.Title className="text-xl font-bold">Erro!</AlertDialog.Title>
+          <AlertDialog.Description className="mt-2">
+            O CPF informado já está cadastrado. Por favor, insira um CPF diferente.
+          </AlertDialog.Description>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
+    </>
   );
 }
 
