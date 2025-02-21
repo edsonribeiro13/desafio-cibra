@@ -9,9 +9,9 @@ import Image from "next/image";
 import { Camera } from "lucide-react";
 import { isValidCPF } from "@/utils/validateCpf";
 import { dataURLtoFile, toBase64 } from "@/utils/base64";
-import {AlertDialog} from 'radix-ui'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { FormPerfil } from "@/interfaces/CardPerfil";
+import DialogInformativo from "./DialogInformativo";
 
 const COMIDAS = ["Pizza", "Hambúrguer", "Sushi", "Churrasco", "Lasanha"];
 const CORES = ["Vermelho", "Azul", "Verde", "Amarelo", "Preto"];
@@ -32,7 +32,9 @@ const PerfilForm = () => {
   const router = useSearchParams();
   const redirect = useRouter()
   const cpfFromUrl = router.get('cpf');
-  const [isFormDisabled, setFormDisabled] = useState(false); 
+  const [isFormDisabled, setFormDisabled] = useState(false);
+  const [textDialog, setTextDialog] = useState('')
+  const [titleDialog, setTitleDialog] = useState('') 
 
   const {
     register,
@@ -57,6 +59,11 @@ const PerfilForm = () => {
         setPreview(URL.createObjectURL(profilePhoto))
         setFormDisabled(true);
       }
+      else {
+        setDialogOpen(true);
+        setTextDialog('Nenhum usuário com esse CPF encontrado')
+        setTitleDialog('Erro!')
+      }
     }
   }, [cpfFromUrl, setValue]);
 
@@ -76,6 +83,8 @@ const PerfilForm = () => {
   const onSubmit = async (data: FormPerfil) => {
     if (localStorage.getItem(data.cpf.replace(/\D/g, "")) && !cpfFromUrl) {
         setDialogOpen(true);
+        setTextDialog('Um usuário com esse CPF já existe')
+        setTitleDialog('Erro!')
         return;
     }
 
@@ -174,19 +183,7 @@ const PerfilForm = () => {
         Salvar
       </button>
     </form>
-    <AlertDialog.Root open={isDialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialog.Trigger />
-        <AlertDialog.Overlay 
-            className="fixed inset-0 bg-black opacity-50" 
-            onClick={() => setDialogOpen(false)}
-        />
-        <AlertDialog.Content className="fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg">
-          <AlertDialog.Title className="text-xl font-bold">Erro!</AlertDialog.Title>
-          <AlertDialog.Description className="mt-2">
-            O CPF informado já está cadastrado. Por favor, insira um CPF diferente.
-          </AlertDialog.Description>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+    <DialogInformativo isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen} text={textDialog} titulo={titleDialog} />
     </>
   );
 }
