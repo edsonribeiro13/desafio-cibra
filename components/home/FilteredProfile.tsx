@@ -1,6 +1,7 @@
 import { FormPerfil } from "@/interfaces/CardPerfil";
 import CardPerfil from "../base/CardPerfil";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface FilteredProfilesProps {
   profiles: FormPerfil[];
@@ -11,6 +12,11 @@ const FilteredProfiles = ({ profiles, searchQuery }: FilteredProfilesProps) => {
   const filteredProfiles = profiles.filter((profile) =>
     profile.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const router = useRouter();
+  const handleEditClick = (cpf: string) => {
+    router.push(`/perfil?cpf=${cpf}`)
+  };
 
   return (
     <div className="flex flex-wrap gap-6 p-2 justify-center">
@@ -23,6 +29,7 @@ const FilteredProfiles = ({ profiles, searchQuery }: FilteredProfilesProps) => {
             cpf={profile.cpf}
             comidaFavorita={profile.comidaFavorita}
             corFavorita={profile.corFavorita}
+            onEdit={handleEditClick}
           />
         ))
       ) : (

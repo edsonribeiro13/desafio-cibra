@@ -7,7 +7,7 @@ import { useFABStore } from "@/store/FABStore";
 import { FormPerfil } from "@/interfaces/CardPerfil";
 import { useState } from "react";
 
-const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita }: FormPerfil) => {
+const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita, onEdit }: FormPerfil & {onEdit: (cpf: string) => void}) => {
   const { setHideFAB } = useFABStore();
   const [showDetails, setShowDetails] = useState(false);
 
@@ -48,7 +48,7 @@ const CardPerfil = ({ cpf, nome, foto, comidaFavorita, corFavorita }: FormPerfil
           </div>
         </div>
       )}
-      <div className="mt-3 flex gap-4">
+      <div onClick={() => onEdit(cpf)} className="mt-3 flex gap-4">
         <button className="text-blue-600 hover:text-blue-800">
           <Pencil size={20} />
         </button>
